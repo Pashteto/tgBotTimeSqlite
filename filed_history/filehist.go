@@ -5,17 +5,16 @@ import (
 
 	"context"
 	"encoding/gob"
-	"strings"
-
 	//	"encoding/json"
 	"errors"
 	"log"
 	"net/url"
 	"os"
+	"strings"
 	"time"
 
-	"github.com/Pashteto/yp_inc1/config"
-	"github.com/Pashteto/yp_inc1/repos"
+	"github.com/Pashteto/tgBotTimeSqlite/config"
+	"github.com/Pashteto/tgBotTimeSqlite/repos"
 )
 
 var ctx, _ = context.WithCancel(context.Background())

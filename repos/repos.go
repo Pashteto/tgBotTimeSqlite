@@ -7,7 +7,7 @@ import (
 	"github.com/go-redis/redis/v8"
 )
 
-// Repository represent the repositories
+// SetterGetter represent the repositories
 type SetterGetter interface {
 	Set(ctx context.Context, key string, value interface{}, exp time.Duration) error
 	Get(ctx context.Context, key string) (string, error)
@@ -28,7 +28,6 @@ func NewRedisRepository(Client redis.Cmdable) SetterGetter {
 
 // Set attaches the redis repository and set the data
 func (r *repository) Set(ctx context.Context, key string, value interface{}, exp time.Duration) error {
-
 	return r.Client.Set(ctx, key, value, exp).Err()
 }
 
@@ -43,10 +42,7 @@ func (r *repository) Ping(ctx context.Context) error {
 }
 
 func (r *repository) ListAllKeys(ctx context.Context) ([]string, error) {
-	//r.Client.FlushAll(ctx)
 	return r.Client.Keys(ctx, "*").Result()
-
-	//return []string {}, true
 }
 
 func (r *repository) FlushAllKeys(ctx context.Context) error {
