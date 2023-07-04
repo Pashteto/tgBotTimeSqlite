@@ -52,7 +52,6 @@ jobs:
         run: |
           echo "Listing workspace contents:"
           ls -la ${{ github.workspace }}
-
       - name: Create environment file on server
         run: |
           ssh -i deploy_key.pem -o StrictHostKeyChecking=no ${{ env.HOST }} "\
