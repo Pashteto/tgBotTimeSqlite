@@ -3,7 +3,7 @@ Description=Telegram bot that does some stuff
 After=network.target
 
 [Service]
-User=root
+User=ubuntu
 WorkingDirectory=/ubuntu/apps/tg_bot_time_zoner
 ExecStart=/ubuntu/apps/tg_bot_time_zoner/tg_bot_time_zoner
 Restart=always

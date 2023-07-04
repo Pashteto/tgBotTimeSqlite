@@ -12,9 +12,9 @@ jobs:
     runs-on: ubuntu-latest
     env:
       HOST: ubuntu@129.146.130.46
-      DEPLOY_DIRECTORY: /ubuntu/apps/tg_bot_time_zoner
-      CONFIG_PATH: /ubuntu/apps/tg_bot_time_zoner/config/prod.yaml
-      ENV_FILE_PATH: /ubuntu/apps/tg_bot_time_zoner/config.env
+      DEPLOY_DIRECTORY: ubuntu/apps/tg_bot_time_zoner
+      CONFIG_PATH: ubuntu/apps/tg_bot_time_zoner/config/prod.yaml
+      ENV_FILE_PATH: ubuntu/apps/tg_bot_time_zoner/config.env
 
     steps:
       - name: Checkout repository
