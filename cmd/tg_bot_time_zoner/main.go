@@ -71,8 +71,9 @@ func main() {
 
 	r := mux.NewRouter()
 
-	r.HandleFunc("/stop_listen", sshand.StopListenBot).Methods("POST") //routing post
-	r.HandleFunc("/listen", sshand.ListenBot).Methods("POST")          //routing post
+	r.HandleFunc("/stop_listen", sshand.StopListenBot).Methods("POST")  //routing post
+	r.HandleFunc("/listen", sshand.ListenBot).Methods("POST")           //routing post
+	r.HandleFunc("/helping-nikita", sshand.GetNikitaReq).Methods("GET") //routing get
 
 	http.Handle("/", r)
 
@@ -97,7 +98,7 @@ func main() {
 
 	err = server.ListenAndServe()
 	if err != nil {
-		log.Println(err)
+		log.Println(err.Error())
 		return
 	}
 }

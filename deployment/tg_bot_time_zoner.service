@@ -1,0 +1,15 @@
+[Unit]
+Description=Telegram bot that does some stuff
+After=network.target
+
+[Service]
+User=root
+WorkingDirectory=/root/apps/tg_bot_time_zoner
+ExecStart=/root/apps/tg_bot_time_zoner/tg_bot_time_zoner
+Restart=always
+RestartSec=4
+StandardOutput=inherit
+EnvironmentFile=/root/apps/tg_bot_time_zoner/config.env
+
+[Install]
+WantedBy=multi-user.target

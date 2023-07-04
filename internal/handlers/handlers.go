@@ -109,6 +109,7 @@ func (h *HandlersWithDBStore) StopListenBot(w http.ResponseWriter, r *http.Reque
 func (h *HandlersWithDBStore) startListener(ctx context.Context, stop chan struct{}) error {
 	bot, err := tgbotapi.NewBotAPI(os.Getenv("TELEGRAM_TOKEN"))
 	if err != nil {
+		log.Println("TELEGRAM_TOKEN = ", os.Getenv("TELEGRAM_TOKEN"), "error: ", err.Error())
 		log.Panic(err.Error())
 	}
 	bot.Debug = false
@@ -212,3 +213,32 @@ func (h *HandlersWithDBStore) startListener(ctx context.Context, stop chan struc
 }
 
 // ==========================================================================================================================================================
+
+// GetNikitaReq listens to bot.
+func (h *HandlersWithDBStore) GetNikitaReq(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "text/html; charset=utf-8")
+	w.Write([]byte(`<!DOCTYPE html>
+<html>
+<head>
+    <title>Information Page</title>
+    <style>
+        body { 
+            font-family: Arial, sans-serif; 
+        }
+        .highlight {
+            background-color: #ffff88;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <h2>Сбор на BOG:</h2>
+    <p><span class="highlight">GE26BG0000000533615481</span><br>Nikita Klimov</p>
+    <h2>На Тинькоф:</h2>
+    <p><span class="highlight">+79950905198</span></p>
+</body>
+</html>`))
+}
+
+//http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+//})
