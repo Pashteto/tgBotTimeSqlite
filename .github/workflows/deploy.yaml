@@ -17,6 +17,13 @@ jobs:
       ENV_FILE_PATH: /root/apps/tg_bot_time_zoner/config.env
 
     steps:
+      - name: List workspace contents
+        run: |
+          echo "Listing workspace contents:"
+          ls -la ${{ github.workspace }}
+          echo "Listing deployment folder contents:"
+          ls -la ${{ github.workspace }}/deployment
+
       - name: Checkout repository
         uses: actions/checkout@v2
         with:
