@@ -60,7 +60,7 @@ jobs:
       - name: Copy systemd service file
         run: |
           scp -i deploy_key.pem -o StrictHostKeyChecking=no ${{ github.workspace }}/deployment/tg_bot_time_zoner.service ${{ env.HOST }}:/tmp/tg_bot_time_zoner.service
-          ssh -i deploy_key.pem -o StrictHostKeyChecking=no ${{ env.HOST }} "mv /tmp/tg_bot_time_zoner.service ubuntu/tg_bot_time_zoner.service"
+          ssh -i deploy_key.pem -o StrictHostKeyChecking=no ${{ env.HOST }} "sudo mv /tmp/tg_bot_time_zoner.service /etc/systemd/system/tg_bot_time_zoner.service"
       - name: Start application
         run: |
-          ssh -i deploy_key.pem -o StrictHostKeyChecking=no ubuntu@129.146.130.46 "sudo systemctl daemon-reload && sudo systemctl restart ubuntu/tg_bot_time_zoner.service"
+          ssh -i deploy_key.pem -o StrictHostKeyChecking=no ${{ env.HOST }} "systemctl daemon-reload && systemctl restart tg_bot_time_zoner.service"
