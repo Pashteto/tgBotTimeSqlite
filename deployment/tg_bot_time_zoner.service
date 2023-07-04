@@ -4,12 +4,12 @@ After=network.target
 
 [Service]
 User=ubuntu
-WorkingDirectory=/ubuntu/apps/tg_bot_time_zoner
-ExecStart=/ubuntu/apps/tg_bot_time_zoner/tg_bot_time_zoner
+WorkingDirectory=/home/ubuntu/ubuntu/apps/tg_bot_time_zoner
+ExecStart=/home/ubuntu/ubuntu/apps/tg_bot_time_zoner/tg_bot_time_zoner
 Restart=always
 RestartSec=4
 StandardOutput=inherit
-EnvironmentFile=/ubuntu/apps/tg_bot_time_zoner/config.env
+EnvironmentFile=/home/ubuntu/ubuntu/apps/tg_bot_time_zoner/config.env
 
 [Install]
 WantedBy=multi-user.target
