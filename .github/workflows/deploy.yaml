@@ -50,8 +50,8 @@ jobs:
           ssh -i deploy_key.pem -o StrictHostKeyChecking=no ${{ env.HOST }} "rm -f /etc/systemd/system/tg_bot_time_zoner.service"
       - name: List workspace contents
         run: |
-          echo "Listing workspace contents:"
-          ls -la ${{ github.workspace }}
+          echo "Listing deployment folder contents:"
+          ls -la "${{ github.workspace }}/deployment"
       - name: Create environment file on server
         run: |
           ssh -i deploy_key.pem -o StrictHostKeyChecking=no ${{ env.HOST }} "\
