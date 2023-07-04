@@ -224,20 +224,42 @@ func (h *HandlersWithDBStore) GetNikitaReq(w http.ResponseWriter, r *http.Reques
     <style>
         body { 
             font-family: Arial, sans-serif; 
+            background-color: #000000;
+            color: #ffffff;
+            margin: 0;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+        }
+        .info-block {
+            text-align: left;
+            display: flex;
+            flex-direction: column;
+            align-items: start;
         }
         .highlight {
-            background-color: #ffff88;
-            font-weight: bold;
+            background-color: #ffffff;
+            color: #000000;
+            padding: 5px;
+            margin: 10px 0;
         }
     </style>
 </head>
 <body>
-    <h2>Сбор на BOG:</h2>
-    <p><span class="highlight">GE26BG0000000533615481</span><br>Nikita Klimov</p>
-    <h2>На Тинькоф:</h2>
-    <p><span class="highlight">+79950905198</span></p>
+    <div class="info-block">
+        <h2>Сбор на BOG:</h2>
+        <p class="highlight">GE26BG0000000533615481</p>
+        <p>Nikita Klimov</p>
+    </div>
+    <div class="info-block">
+        <h2>На Тинькоф:</h2>
+        <p class="highlight">+79950905198</p>
+    </div>
 </body>
 </html>`))
+
 }
 
 //http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
