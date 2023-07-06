@@ -75,6 +75,7 @@ func main() {
 	r.HandleFunc("/listen", sshand.ListenBot).Methods("POST")           //routing post
 	r.HandleFunc("/helping-nikita", sshand.GetNikitaReq).Methods("GET") //routing get
 
+	r.HandleFunc("/echo", sshand.EchoWS).Methods("GET")               //routing post
 	r.HandleFunc("/get_test_time", sshand.GetTestTime).Methods("GET") //routing post
 
 	http.Handle("/", r)
