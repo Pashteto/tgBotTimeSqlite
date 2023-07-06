@@ -2,13 +2,19 @@ package handlers
 
 import (
 	"context"
+	"fmt"
 	"log"
 	"net/http"
 	"os"
 	"strings"
 	"time"
 
+	"github.com/ethereum/go-ethereum"
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
+
+	"github.com/ethereum/go-ethereum/common"
+	"github.com/ethereum/go-ethereum/crypto"
+	"github.com/ethereum/go-ethereum/ethclient"
 
 	"github.com/Pashteto/tgBotTimeSqlite/config"
 	"github.com/Pashteto/tgBotTimeSqlite/internal/service"
@@ -276,5 +282,85 @@ func (h *HandlersWithDBStore) GetNikitaReq(w http.ResponseWriter, r *http.Reques
 
 }
 
-//http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-//})
+func (h *HandlersWithDBStore) GetTestTime(w http.ResponseWriter, r *http.Request) {
+	client, err := ethclient.Dial("wss://mainnet.infura.io/ws/v3/a88b378452d94764af81d2ac741cefa7")
+	if err != nil {
+		log.Fatalf("Failed to connect to the Ethereum client: %v", err)
+	}
+
+	contractAddress := common.HexToAddress("0x31760ad6482caf660fe48d4dfbe2953bafc31b63")
+	query := ethereum.FilterQuery{
+		Addresses: []common.Address{contractAddress},
+	}
+	var printout []string
+
+	for j := 0; j < 100; j++ {
+		start := time.Now()
+		logs, err := client.FilterLogs(context.Background(), query)
+		if err != nil {
+			log.Fatalf("Failed to filter logs: %v", err)
+		}
+		var printLog []string
+		for _, vLog := range logs {
+			// This is the hash of the Transfer event signature
+			transferEventHash := crypto.Keccak256Hash([]byte("Transfer(address,address,uint256)"))
+
+			if vLog.Topics[0].Hex() == transferEventHash.Hex() {
+				// This log is a Transfer event
+				fromAddress := common.BytesToAddress(vLog.Topics[1].Bytes())
+				toAddress := common.BytesToAddress(vLog.Topics[2].Bytes())
+				printLog = append(printLog, fmt.Sprintf("Transfer from: %s to: %s", fromAddress.Hex(), toAddress.Hex()))
+				// Now you have the "from" and "to" addresses of the Transfer
+			}
+		}
+
+		endTime := time.Since(start)
+		fmt.Println("Time elapsed(s): ", endTime.Seconds())
+		log.Println(printLog)
+		printout = append(printout, fmt.Sprintln("Time elapsed(s): ", endTime.Seconds()))
+
+		//printout = append(printout, printLog...)
+		//for _, loo := range printLog {
+		//	fmt.Println(loo)
+		//}
+	}
+
+	// Generate the HTML for each string
+	var sb strings.Builder
+	for _, str := range printout {
+		sb.WriteString("<p>" + str + "</p>")
+	}
+
+	w.Header().Set("Content-Type", "text/html; charset=utf-8")
+
+	w.Write([]byte(`<!DOCTYPE html>
+<html>
+<head>
+    <title>Information Page</title>
+    <style>
+        body { 
+            font-family: Arial, sans-serif; 
+            background-color: #000000;
+            color: #ffffff;
+            margin: 0;
+            height: 100vh;
+            display: flex;
+            justify-content: flex-start;
+            align-items: center;
+            flex-direction: column;
+            padding-left: 20px;
+        }
+        .content-container {
+            text-align: left;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+        }
+    </style>
+</head>
+<body>
+    <div class="content-container">` + sb.String() + `</div>
+</body>
+</html>`))
+
+}
