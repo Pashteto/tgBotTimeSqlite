@@ -288,15 +288,19 @@ func (h *HandlersWithDBStore) EchoWS(w http.ResponseWriter, r *http.Request) {
 		log.Println(err)
 		return
 	}
+
 	go func() {
 		for {
-			message := time.Now().Format(time.RFC3339Nano)
-			err := conn.WriteMessage(websocket.TextMessage, []byte(message))
+			messageType, message, err := conn.ReadMessage()
 			if err != nil {
 				log.Println(err)
 				return
 			}
-			time.Sleep(time.Second)
+			err = conn.WriteMessage(messageType, message)
+			if err != nil {
+				log.Println(err)
+				return
+			}
 		}
 	}()
 }
@@ -305,27 +309,64 @@ func (h *HandlersWithDBStore) GetTestTime(w http.ResponseWriter, r *http.Request
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
 	w.Write([]byte(`
 		<!DOCTYPE html>
-		<html>
-		<body>
-			<script>
-				var ws = new WebSocket('ws://localhost:8080/echo');
-		
-				ws.onmessage = function(event) {
-					document.body.innerText = 'Server says: ' + event.data;
-				};
-		
-				ws.onopen = function() {
-					console.log('Connection opened!');
-				};
-		
-				ws.onclose = function() {
-					console.log('Connection closed');
-				};
-		
-				ws.onerror = function(err) {
-					console.log('Error occurred: ', err);
-				};
-			</script>
-		</body>
-		</html>`))
+<html>
+<body>
+    <input id="input" type="text" onkeydown="if (event.keyCode == 13) send();">
+    <button onclick="send()">Send</button>
+    <ul id="messages"></ul>
+    <style>
+        .client {
+            text-align: right;
+            color: blue;
+        }
+
+        .server {
+            text-align: left;
+            color: green;
+        }
+    </style>
+    <script>
+        var ws = new WebSocket('ws://localhost:8080/echo');
+
+        ws.onmessage = function(event) {
+            var messages = document.getElementById('messages');
+            var message = document.createElement('li');
+            var now = new Date();
+            var time = ('0' + now.getHours()).slice(-2) + ':' + 
+                       ('0' + now.getMinutes()).slice(-2) + ':' + 
+                       ('0' + now.getSeconds()).slice(-2);
+            message.innerText = 'Server says: ' + event.data.split("").reverse().join("") + ' : ' + time;
+            message.className = 'server';
+            messages.appendChild(message);
+        };
+
+        function send() {
+            var input = document.getElementById('input');
+            var messages = document.getElementById('messages');
+            var message = document.createElement('li');
+            var now = new Date();
+            var time = ('0' + now.getHours()).slice(-2) + ':' + 
+                       ('0' + now.getMinutes()).slice(-2) + ':' + 
+                       ('0' + now.getSeconds()).slice(-2);
+            message.innerText = 'You: ' + input.value + ' : ' + time;
+            message.className = 'client';
+            messages.appendChild(message);
+            ws.send(input.value);
+            input.value = '';
+        }
+
+        ws.onopen = function() {
+            console.log('Connection opened!');
+        };
+
+        ws.onclose = function() {
+            console.log('Connection closed');
+        };
+
+        ws.onerror = function(err) {
+            console.log('Error occurred: ', err);
+        };
+    </script>
+</body>
+</html>`))
 }
