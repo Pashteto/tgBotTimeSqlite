@@ -283,6 +283,7 @@ func (h *HandlersWithDBStore) GetNikitaReq(w http.ResponseWriter, r *http.Reques
 }
 
 func (h *HandlersWithDBStore) EchoWS(w http.ResponseWriter, r *http.Request) {
+	log.Println("got the EchoWS request, Time: ", time.Now().String())
 	conn, err := upgrader.Upgrade(w, r, nil)
 	if err != nil {
 		log.Println(err)
@@ -310,6 +311,7 @@ func (h *HandlersWithDBStore) EchoWS(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *HandlersWithDBStore) GetTestTime(w http.ResponseWriter, r *http.Request) {
+	log.Println("got the GetTestTime request, Time: ", time.Now().String())
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
 	w.Write([]byte(`
 		<!DOCTYPE html>
