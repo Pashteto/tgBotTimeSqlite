@@ -292,11 +292,15 @@ func (h *HandlersWithDBStore) EchoWS(w http.ResponseWriter, r *http.Request) {
 	go func() {
 		for {
 			messageType, message, err := conn.ReadMessage()
+			log.Println("got message: ", message, "; Time: ", time.Now().String())
 			if err != nil {
 				log.Println(err)
 				return
 			}
-			err = conn.WriteMessage(messageType, message)
+			dfvlnd := string(message)
+			dfvlnd = strings.ReplaceAll(dfvlnd, " ", "")
+			log.Println("sent back: ", dfvlnd, "; Time: ", time.Now().String())
+			err = conn.WriteMessage(messageType, []byte(dfvlnd))
 			if err != nil {
 				log.Println(err)
 				return
