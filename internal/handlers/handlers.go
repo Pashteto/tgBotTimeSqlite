@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"context"
+	"fmt"
 	"log"
 	"net/http"
 	"os"
@@ -313,6 +314,7 @@ func (h *HandlersWithDBStore) EchoWS(w http.ResponseWriter, r *http.Request) {
 func (h *HandlersWithDBStore) GetTestTime(w http.ResponseWriter, r *http.Request) {
 	log.Println("got the GetTestTime request, Time: ", time.Now().String())
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
+	addressPort := h.Conf.WebSocketEnd
 	w.Write([]byte(`
 		<!DOCTYPE html>
 <html>
@@ -332,8 +334,9 @@ func (h *HandlersWithDBStore) GetTestTime(w http.ResponseWriter, r *http.Request
         }
     </style>
     <script>
-        var ws = new WebSocket('ws://localhost:8080/echo');
-
+		
+` +
+		fmt.Sprintf(`var ws = new WebSocket('%s');`, addressPort) + `
         ws.onmessage = function(event) {
             var messages = document.getElementById('messages');
             var message = document.createElement('li');

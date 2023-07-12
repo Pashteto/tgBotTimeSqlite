@@ -29,9 +29,7 @@ func main() {
 	FStorPathPtr := flag.String("f", "../possible_data", "FILE_STORAGE_PATH")
 	flag.Parse()
 
-	log.Println("Flags input:\nSERVER_ADDRESS,\tBASE_URL,\tFILE_STORAGE_PATH:\t",
-		*ServAddrPtr, ",",
-		*BaseURLPtr, ",", *FStorPathPtr)
+	log.Println("Flags input:\nSERVER_ADDRESS,\tBASE_URL,\tFILE_STORAGE_PATH:\t", *ServAddrPtr, ",", *BaseURLPtr, ",", *FStorPathPtr)
 	err := env.Parse(&conf)
 	if err != nil {
 		log.Fatalf("Unable to Parse env:\t%v", err)

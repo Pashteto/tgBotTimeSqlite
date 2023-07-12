@@ -55,7 +55,8 @@ jobs:
           touch ${{ env.ENV_FILE_PATH }} && \
           chmod 600 ${{ env.ENV_FILE_PATH }} && \
           echo 'CONFIG_PATH=${{ env.CONFIG_PATH }}' > ${{ env.ENV_FILE_PATH }} && \
-          echo 'TELEGRAM_TOKEN=${{ secrets.TELEGRAM_TOKEN }}' >> ${{ env.ENV_FILE_PATH }}"
+          echo 'TELEGRAM_TOKEN=${{ secrets.TELEGRAM_TOKEN }}' >> ${{ env.ENV_FILE_PATH }} && \
+          echo 'WS_URL=${{secrets.WS_URL}}' >> ${{ env.ENV_FILE_PATH }}"
 
       - name: Copy systemd service file
         run: |
