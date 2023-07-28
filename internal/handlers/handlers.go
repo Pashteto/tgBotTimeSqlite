@@ -280,8 +280,68 @@ func (h *HandlersWithDBStore) GetNikitaReq(w http.ResponseWriter, r *http.Reques
     </div>
 </body>
 </html>`))
-
 }
+
+// ==========================================================================================================================================================
+
+// GetElenaReq listens to bot.
+func (h *HandlersWithDBStore) GetElenaReq(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "text/html; charset=utf-8")
+	w.Write([]byte(`<!DOCTYPE html>
+<html>
+<head>
+    <title>Information Page</title>
+    <style>
+        body { 
+            font-family: Arial, sans-serif; 
+            background-color: #000000;
+            color: #ffffff;
+            margin: 0;
+            height: 100vh;
+            display: flex;
+            justify-content: flex-start;
+            align-items: center;
+            flex-direction: column;
+            padding-left: 20px;
+        }
+        .content-container {
+            text-align: left;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+        }
+        .info-block {
+            transition: all 0.3s ease;
+        }
+        .info-block:hover {
+            transform: scale(1.05);
+        }
+        .highlight {
+            background-color: #ffffff;
+            color: #000000;
+            padding: 5px;
+            margin: 10px 0;
+            transition: all 0.3s ease;
+        }
+        .highlight:hover {
+            background-color: #000000;
+            color: #ffffff;
+        }
+    </style>
+</head>
+<body>
+    <div class="content-container">
+        <div class="info-block">
+            <h2>Сбор на TBC Bank:</h2>
+            <p class="highlight">GE54TB7203645064300043</p>
+            <p>Elena Mavromatis</p>
+        </div>
+    </div>
+</body>
+</html>`))
+}
+
+// ==========================================================================================================================================================
 
 func (h *HandlersWithDBStore) EchoWS(w http.ResponseWriter, r *http.Request) {
 	log.Println("got the EchoWS request, Time: ", time.Now().String())
