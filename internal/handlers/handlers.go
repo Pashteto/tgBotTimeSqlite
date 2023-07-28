@@ -332,7 +332,7 @@ func (h *HandlersWithDBStore) GetElenaReq(w http.ResponseWriter, r *http.Request
 <body>
     <div class="content-container">
         <div class="info-block">
-            <h2>Сбор на TBC Bank:</h2>
+            <h2>TBC Bank:</h2>
             <p class="highlight">GE54TB7203645064300043</p>
             <p>Elena Mavromatis</p>
         </div>
