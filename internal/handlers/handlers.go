@@ -336,6 +336,10 @@ func (h *HandlersWithDBStore) GetElenaReq(w http.ResponseWriter, r *http.Request
             <p class="highlight">GE54TB7203645064300043</p>
             <p>Elena Mavromatis</p>
         </div>
+        <div class="info-block">
+            <h2>Swift code:</h2>
+            <p class="highlight">TBCBGE22</p>
+        </div>
     </div>
 </body>
 </html>`))
