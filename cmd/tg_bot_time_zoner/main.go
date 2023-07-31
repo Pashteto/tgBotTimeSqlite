@@ -98,9 +98,33 @@ func main() {
 		}
 	}()
 
-	err = server.ListenAndServe()
-	if err != nil {
-		log.Println(err.Error())
-		return
+	if conf.LocalDebug {
+		httpMux := http.NewServeMux()
+		httpMux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+			http.Redirect(w, r, "http://localhost:8080"+r.RequestURI, http.StatusMovedPermanently)
+		})
+		go func() {
+			log.Fatal(http.ListenAndServe(":80", httpMux))
+		}()
+
+		err = server.ListenAndServe()
+		if err != nil {
+			log.Println(err.Error())
+			return
+		}
+	} else {
+		httpMux := http.NewServeMux()
+		httpMux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+			http.Redirect(w, r, "https://localhost:443"+r.RequestURI, http.StatusMovedPermanently)
+		})
+		go func() {
+			log.Fatal(http.ListenAndServe(":80", httpMux))
+		}()
+		server.Addr = ":443"
+		err = server.ListenAndServeTLS("/etc/letsencrypt/live/pashteto.com/fullchain.pem", "/etc/letsencrypt/live/pashteto.com/privkey.pem")
+		if err != nil {
+			log.Println(err.Error())
+			return
+		}
 	}
 }

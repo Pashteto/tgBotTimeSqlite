@@ -4,6 +4,7 @@ type Config struct {
 	ServAddr     string `env:"SERVER_ADDRESS" envDefault:":8080"`
 	BaseURL      string `env:"BASE_URL" envDefault:"http://localhost:8080"`
 	WebSocketEnd string `env:"WS_URL" envDefault:"ws://localhost:8080/echo"`
+	LocalDebug   bool   `env:"LOCAL_DEBUG" envDefault:"false"`
 
 	FStorPath string `env:"FILE_STORAGE_PATH" envDefault:"../URLs" envExpand:"true"`
 }
