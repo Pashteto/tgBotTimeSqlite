@@ -64,8 +64,9 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
+	fileServ := http.FileServer(http.Dir("./templates/**/*"))
 
-	sshand := handlers.NewHandlersWithDBStore(&conf, sqliteRepo)
+	sshand := handlers.NewHandlersWithDBStore(&conf, sqliteRepo, &fileServ)
 
 	r := mux.NewRouter()
 
@@ -73,9 +74,10 @@ func main() {
 	r.HandleFunc("/listen", sshand.ListenBot).Methods("POST")           //routing post
 	r.HandleFunc("/helping-nikita", sshand.GetNikitaReq).Methods("GET") //routing get
 	r.HandleFunc("/helping-elena", sshand.GetElenaReq).Methods("GET")   //routing get
-
-	r.HandleFunc("/echo", sshand.EchoWS).Methods("GET")               //routing post
-	r.HandleFunc("/get_test_time", sshand.GetTestTime).Methods("GET") //routing post
+	r.HandleFunc("/echo", sshand.EchoWS).Methods("GET")                 //routing post
+	r.HandleFunc("/get_test_time", sshand.GetTestTime).Methods("GET")   //routing post
+	r.HandleFunc("/", sshand.Bio).Methods("GET")                        //routing post
+	r.HandleFunc("/getBio", sshand.GetBio).Methods("GET")               //routing post
 
 	http.Handle("/", r)
 
