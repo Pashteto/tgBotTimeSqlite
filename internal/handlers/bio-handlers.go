@@ -7,56 +7,68 @@ import (
 // Bio returns your bio page.
 func (h *HandlersWithDBStore) Bio(w http.ResponseWriter, r *http.Request) {
 	html := `
-		<!DOCTYPE html>
-		<html>
+<!DOCTYPE html>
+	<html>
 		<head>
 		    <title>Your Bio</title>
 		    <script src="https://unpkg.com/htmx.org@1.6.1"></script>
-    <style>
-        body { 
-            font-family: Arial, sans-serif; 
-            background-color: #000000;
-            color: #ffffff;
-            margin: 0;
-            height: 100vh;
-            display: flex;
-            justify-content: flex-start;
-            align-items: center;
-            flex-direction: column;
-            padding-left: 20px;
-        }
-        .content-container {
-            text-align: left;
-            display: flex;
-            flex-direction: column;
-            align-items: flex-start;
-        }
-        .info-block {
-            transition: all 0.3s ease;
-        }
-        .info-block:hover {
-            transform: scale(1.05);
-        }
-        .highlight {
-            background-color: #ffffff;
-            color: #000000;
-            padding: 5px;
-            margin: 10px 0;
-            transition: all 0.3s ease;
-        }
-        .highlight:hover {
-            background-color: #000000;
-            color: #ffffff;
-        }
-    </style>
+    		<style>
+    		    body { 
+    		        font-family: Arial, sans-serif; 
+    		        background-color: #000000;
+    		        color: #ffffff;
+    		        margin: 0;
+    		        height: 100vh;
+    		        display: flex;
+    		        justify-content: flex-start;
+    		        align-items: center;
+    		        flex-direction: column;
+    		        padding-left: 20px;
+    		    }
+    		    .content-container {
+    		        text-align: left;
+    		        display: flex;
+    		        flex-direction: column;
+    		        align-items: flex-start;
+    		    }
+    		    .info-block {
+    		        transition: all 0.3s ease;
+    		    }
+    		    .info-block:hover {
+    		        transform: scale(1.05);
+    		    }
+    		    .highlight {
+    		        background-color: #ffffff;
+    		        color: #000000;
+    		        padding: 5px;
+    		        margin: 10px 0;
+    		        transition: all 0.3s ease;
+    		    }
+    		    .highlight:hover {
+    		        background-color: #000000;
+    		        color: #ffffff;
+    		    }
+    		</style>
 		</head>
 		<body>
-		    <div id="bio" hx-get="/getBio" hx-trigger="load">
-		        Loading...
-		    </div>
+			<div id="bio" hx-get="/getBio" hx-trigger="load">
+			        Loading...
+			</div>
+    		<button id="copyButton">Copy to clipboard</button>
+			<script>
+			    document.getElementById("copyButton").addEventListener("click", async function() {
+			        try {
+			            const text = "Is really hard...";
+			            await navigator.clipboard.writeText(text);
+			            console.log('Copying to clipboard was successful!');
+			        } catch (err) {
+			            console.error('Failed to copy text: ', err);
+			        }
+			    });
+			</script>
 		</body>
-		</html>
-		`
+	</html>
+`
 	_, err := w.Write([]byte(html))
 	if err != nil {
 		return
