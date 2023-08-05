@@ -10,7 +10,8 @@ func (h *HandlersWithDBStore) Bio(w http.ResponseWriter, r *http.Request) {
 <!DOCTYPE html>
 	<html>
 		<head>
-		    <title>Your Bio</title>
+			<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+			<title>Bio</title>
 		    <script src="https://unpkg.com/htmx.org@1.6.1"></script>
     		<style>
     		    body { 
@@ -48,24 +49,37 @@ func (h *HandlersWithDBStore) Bio(w http.ResponseWriter, r *http.Request) {
     		        background-color: #000000;
     		        color: #ffffff;
     		    }
+				.addTextButton {
+				    padding: 10px 20px; /* size */
+				    background-color: #008CBA; /* color */
+				    border: none; /* remove default border */
+				    color: black; /* text color */
+				    text-align: center; /* align text */
+				    text-decoration: none; /* remove underline */
+				    display: inline-block;
+				    font-size: 16px; /* text size */
+				    margin: 4px 2px;
+				    transition-duration: 0.4s; /* transition effect */
+				    cursor: pointer; /* change cursor style on hover */
+				    border-radius: 4px; /* rounded corners */
+				}
     		</style>
 		</head>
 		<body>
 			<div id="bio" hx-get="/getBio" hx-trigger="load">
 			        Loading...
 			</div>
-    		<button id="copyButton">Copy to clipboard</button>
-			<script>
-			    document.getElementById("copyButton").addEventListener("click", async function() {
-			        try {
-			            const text = "Is really hard...";
-			            await navigator.clipboard.writeText(text);
-			            console.log('Copying to clipboard was successful!');
-			        } catch (err) {
-			            console.error('Failed to copy text: ', err);
-			        }
-			    });
-			</script>
+			<button id="addTextButton" class="addTextButton">Copy</button>
+    		<div id="extraText"><h1></h1></div>
+    		<script>
+    		    document.getElementById("addTextButton").addEventListener("click", function() {
+    		        var newText = document.createElement("p");
+    		        newText.textContent = "...is to stay kind, humble and keep learning.";
+    		        document.getElementById("extraText").appendChild(newText);
+    		        this.style.display = "none"; // hides the button
+    		    });
+    		</script>
+
 		</body>
 	</html>
 `
@@ -80,7 +94,7 @@ func (h *HandlersWithDBStore) GetBio(w http.ResponseWriter, r *http.Request) {
 	//time.Sleep(time.Second)
 	bio := `
 		<div>
-		    <h1>Emigrant's work.</h1>
+		    <h1>Emigrant's work...</h1>
 		</div>
 		`
 	_, err := w.Write([]byte(bio))
