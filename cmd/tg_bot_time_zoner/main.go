@@ -77,9 +77,16 @@ func main() {
 	r.HandleFunc("/helping-nikita", sshand.GetNikitaReq).Methods("GET") //routing get
 	r.HandleFunc("/helping-elena", sshand.GetElenaReq).Methods("GET")   //routing get
 	r.HandleFunc("/echo", sshand.EchoWS).Methods("GET")                 //routing post
-	r.HandleFunc("/get_test_time", sshand.GetTestTime).Methods("GET")   //routing post
-	r.HandleFunc("/", sshand.Bio).Methods("GET")                        //routing post
-	r.HandleFunc("/getBio", sshand.GetBio).Methods("GET")               //routing post
+	r.HandleFunc("/bot",
+		func(w http.ResponseWriter, r *http.Request) {
+			time.Sleep(1 * time.Second)
+			log.Println("bot-login, redirecting to http://localhost:8181 + :", r.RequestURI)
+			link := "http://localhost:8181" + strings.TrimPrefix(r.RequestURI, "/bot")
+			http.Redirect(w, r, link, http.StatusMovedPermanently)
+		})
+	r.HandleFunc("/get_test_time", sshand.GetTestTime).Methods("GET") //routing post
+	r.HandleFunc("/", sshand.Bio).Methods("GET")                      //routing post
+	r.HandleFunc("/getBio", sshand.GetBio).Methods("GET")             //routing post
 
 	http.Handle("/", r)
 
