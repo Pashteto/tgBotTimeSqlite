@@ -94,14 +94,14 @@ func main() {
 			log.Printf("Form %+v", r.Form)
 			log.Printf("RequestURI %+v", r.RequestURI)
 
-			sshand.GetNikitaReq(w, r)
+			//sshand.GetNikitaReq(w, r)
 			//log.Println("bot-login, redirecting to https://www.google.com/ or http://localhost:8181 + :", r.RequestURI)
 			//link := "http://localhost:8181" + strings.TrimPrefix(r.RequestURI, "/bot")
 			//http.Redirect(w, r, "https://www.google.com/", http.StatusMovedPermanently)
 		})
 	r.HandleFunc("/get_test_time", sshand.GetTestTime).Methods("GET") //routing post
-	r.HandleFunc("/", sshand.Bio).Methods("GET")                      //routing post
 	r.HandleFunc("/getBio", sshand.GetBio).Methods("GET")             //routing post
+	r.HandleFunc("/", sshand.Bio).Methods("GET")                      //routing post
 
 	http.Handle("/", r)
 
