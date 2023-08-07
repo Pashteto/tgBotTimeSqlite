@@ -71,25 +71,22 @@ function loadProfilePage(username) {
 
     // Function to login the user
     function loginUser(user) {
-        fetch('/api/login', {
-    method: 'POST',
-    headers: {
-        'Content-Type': 'application/json'
-    },
-    body: JSON.stringify({
-        username: user.username
-    })
-})
-.then(response => response.json())
-.then(data => {
-    if (data.success) {
-        // User is authenticated, load the profile page
-        loadProfilePage(user.username);
-    } else {
-        // User is not authenticated, show the login page
-        showLoginPage();
-    }
-});
+    	    fetch('/api/login', {
+    	method: 'POST',
+    	headers: {
+    	    'Content-Type': 'application/json'
+    	},
+    	body: JSON.stringify({
+    	    username: user.username
+    	})}).then(response => response.json()).then(data => {
+	    if (data.success) {
+	        // User is authenticated, load the profile page
+	        loadProfilePage(user.username);
+	    } else {
+	        // User is not authenticated, show the login page
+	        showLoginPage();
+	    }
+	});
     }
 
     // Login the user on page load
