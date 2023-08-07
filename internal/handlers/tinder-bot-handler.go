@@ -61,6 +61,9 @@ function loadProfilePage(username) {
         document.getElementById('username').value = data.username;
         document.getElementById('description').value = data.description;
         document.getElementById('keywords').value = data.keywords;
+    })
+    .catch(error => {
+        console.error('There has been a problem with your fetch operation:', error);
     });
 }
     // Function to show the login page
