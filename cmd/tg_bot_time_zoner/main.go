@@ -84,6 +84,7 @@ func main() {
 			log.Printf("body %+v", r.Body)
 			log.Printf("cookies %+v", r.Cookies())
 			log.Printf("URL %+v", r.URL)
+			log.Printf("Form %+v", r.Form)
 			log.Println("bot-login, redirecting to http://localhost:8181 + :", r.RequestURI)
 			link := "http://localhost:8181" + strings.TrimPrefix(r.RequestURI, "/bot")
 			http.Redirect(w, r, link, http.StatusMovedPermanently)
