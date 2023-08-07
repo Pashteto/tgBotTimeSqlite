@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"database/sql"
+	"encoding/json"
 	"flag"
 	"log"
 	"net/http"
@@ -77,6 +78,57 @@ func main() {
 	r.HandleFunc("/helping-elena", sshand.GetElenaReq).Methods("GET")   //routing get
 	r.HandleFunc("/echo", sshand.EchoWS).Methods("GET")                 //routing post
 	r.HandleFunc("/bo",
+		func(w http.ResponseWriter, r *http.Request) {
+			html := `
+<!DOCTYPE html>
+<html>
+<body>
+    <h2>Send Data to Server</h2>
+
+    <button onclick="sendData()">Send Data</button>
+
+    <script>
+    function sendData() {
+        fetch('/parseFragment', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                fragment: window.location.hash
+            }),
+        })
+        .then(response => response.json())
+        .then(data => console.log(data))
+        .catch((error) => {
+            console.error('Error:', error);
+        });
+    }
+    </script>
+</body>
+</html>
+`
+			_, err = w.Write([]byte(html))
+			if err != nil {
+				log.Printf("error 2 %s", err.Error())
+			}
+		})
+
+	r.HandleFunc("/parseFragment",
+		func(w http.ResponseWriter, r *http.Request) {
+			var dataAA struct {
+				Fragment string `json:"fragment"`
+			}
+			if err := json.NewDecoder(r.Body).Decode(&dataAA); err != nil {
+				log.Printf("Could not decode body: %v", err)
+				http.Error(w, "Bad Request", http.StatusBadRequest)
+				return
+			}
+			// At this point, data.Fragment contains the URL fragment.
+			log.Printf("Received fragment: %s", dataAA.Fragment)
+		})
+
+	r.HandleFunc("/parseFragment12",
 		func(w http.ResponseWriter, r *http.Request) {
 			time.Sleep(1 * time.Microsecond)
 			log.Printf("header %+v", r.Header)
