@@ -79,7 +79,11 @@ func main() {
 	r.HandleFunc("/echo", sshand.EchoWS).Methods("GET")                 //routing post
 	r.HandleFunc("/bot",
 		func(w http.ResponseWriter, r *http.Request) {
-			time.Sleep(1 * time.Second)
+			time.Sleep(1 * time.Microsecond)
+			log.Printf("header %+v", r.Header)
+			log.Printf("body %+v", r.Body)
+			log.Printf("cookies %+v", r.Cookies())
+			log.Printf("URL %+v", r.URL)
 			log.Println("bot-login, redirecting to http://localhost:8181 + :", r.RequestURI)
 			link := "http://localhost:8181" + strings.TrimPrefix(r.RequestURI, "/bot")
 			http.Redirect(w, r, link, http.StatusMovedPermanently)

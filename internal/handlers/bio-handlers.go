@@ -69,7 +69,7 @@ func (h *HandlersWithDBStore) Bio(w http.ResponseWriter, r *http.Request) {
 			<div id="bio" hx-get="/getBio" hx-trigger="load">
 			        Loading...
 			</div>
-			<button id="addTextButton" class="addTextButton">Copy</button>
+			<button id="addTextButton" class="addTextButton">...?</button>
     		<div id="extraText"><h1></h1></div>
     		<script>
     		    document.getElementById("addTextButton").addEventListener("click", function() {
