@@ -76,7 +76,7 @@ func main() {
 	r.HandleFunc("/helping-nikita", sshand.GetNikitaReq).Methods("GET") //routing get
 	r.HandleFunc("/helping-elena", sshand.GetElenaReq).Methods("GET")   //routing get
 	r.HandleFunc("/echo", sshand.EchoWS).Methods("GET")                 //routing post
-	r.HandleFunc("/bot",
+	r.HandleFunc("/bo",
 		func(w http.ResponseWriter, r *http.Request) {
 			time.Sleep(1 * time.Microsecond)
 			log.Printf("header %+v", r.Header)
@@ -91,6 +91,20 @@ func main() {
 			log.Printf("body %+v", r.Body)
 			log.Printf("cookies %+v", r.Cookies())
 			log.Printf("URL %+v", r.URL)
+			log.Printf("URL user %+v", r.URL.User)
+			log.Printf("URL RequestURI() %+v", r.URL.RequestURI())
+			log.Printf("URL Query() %+v", r.URL.Query())
+			log.Printf("URL Query()username %+v", r.URL.Query().Get("username"))
+			log.Printf("URL Query()first_name %+v", r.URL.Query().Get("first_name"))
+			log.Printf("URL Query()last_name %+v", r.URL.Query().Get("last_name"))
+			log.Printf("URL Query() auth_date %+v", r.URL.Query().Get("auth_date"))
+			log.Printf("URL Query()allows_write_to_pm %+v", r.URL.Query().Get("allows_write_to_pm"))
+			log.Printf("URL Query()id %+v", r.URL.Query().Get("id"))
+			log.Printf("URL Query()user %+v", r.URL.Query().Get("user"))
+			log.Printf("URL Query()id %+v", r.URL.Query().Get("id"))
+			log.Printf("URL Query()hash %+v", r.URL.Query().Get("hash"))
+			log.Printf("URL String() %+v", r.URL.String())
+			log.Printf("URL Fragment %+v", r.URL.Fragment)
 			log.Printf("Form %+v", r.Form)
 			log.Printf("RequestURI %+v", r.RequestURI)
 			html := `
