@@ -3,14 +3,12 @@ package main
 import (
 	"context"
 	"database/sql"
-	"encoding/json"
 	"flag"
 	"log"
 	"net/http"
 	"os"
 	"os/signal"
 	"syscall"
-	"time"
 
 	"github.com/caarlos0/env/v6"
 	"github.com/gorilla/mux"
@@ -72,179 +70,17 @@ func main() {
 
 	r := mux.NewRouter()
 
-	r.HandleFunc("/stop_listen", sshand.StopListenBot).Methods("POST")  //routing post
-	r.HandleFunc("/listen", sshand.ListenBot).Methods("POST")           //routing post
-	r.HandleFunc("/helping-nikita", sshand.GetNikitaReq).Methods("GET") //routing get
-	r.HandleFunc("/helping-elena", sshand.GetElenaReq).Methods("GET")   //routing get
-	r.HandleFunc("/echo", sshand.EchoWS).Methods("GET")                 //routing post
-	r.HandleFunc("/bo",
-		func(w http.ResponseWriter, r *http.Request) {
-			html := `
-<!DOCTYPE html>
-<html>
-<body>
-    <h2>Send Data to Server</h2>
+	r.HandleFunc("/stop_listen", sshand.StopListenBot).Methods("POST")
+	r.HandleFunc("/listen", sshand.ListenBot).Methods("POST")
+	r.HandleFunc("/helping-nikita", sshand.GetNikitaReq).Methods("GET")
+	r.HandleFunc("/helping-elena", sshand.GetElenaReq).Methods("GET")
+	r.HandleFunc("/echo", sshand.EchoWS).Methods("GET")
+	r.HandleFunc("/bo", sshand.BotEntryHandler).Methods("GET")
+	r.HandleFunc("/api/login", sshand.BotLogin).Methods("POST")
+	r.HandleFunc("/api/profile", sshand.BotProfile).Methods("GET")
 
-    <button onclick="sendData()">Send Data</button>
+	r.HandleFunc("/submit", sshand.BotSubmitHandler).Methods("POST")
 
-    <script>
-    function sendData() {
-        fetch('/parseFragment', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-                fragment: window.location.hash
-            }),
-        })
-        .then(response => response.json())
-        .then(data => console.log(data))
-        .catch((error) => {
-            console.error('Error:', error);
-        });
-    }
-    </script>
-</body>
-</html>
-`
-			_, err = w.Write([]byte(html))
-			if err != nil {
-				log.Printf("error 2 %s", err.Error())
-			}
-		})
-
-	r.HandleFunc("/parseFragment",
-		func(w http.ResponseWriter, r *http.Request) {
-			var dataAA struct {
-				Fragment string `json:"fragment"`
-			}
-			if err := json.NewDecoder(r.Body).Decode(&dataAA); err != nil {
-				log.Printf("Could not decode body: %v", err)
-				http.Error(w, "Bad Request", http.StatusBadRequest)
-				return
-			}
-			// At this point, data.Fragment contains the URL fragment.
-			log.Printf("Received fragment: %s", dataAA.Fragment)
-		})
-
-	r.HandleFunc("/parseFragment12",
-		func(w http.ResponseWriter, r *http.Request) {
-			time.Sleep(1 * time.Microsecond)
-			log.Printf("header %+v", r.Header)
-			log.Printf("body %+v", r.Body)
-			var data []byte
-			read, err := r.Body.Read(data)
-			if err != nil {
-				log.Printf("error %s", err.Error())
-			} else {
-				log.Printf("read %d: %s", read, string(data))
-			}
-			log.Printf("body %+v", r.Body)
-			log.Printf("cookies %+v", r.Cookies())
-			log.Printf("URL %+v", r.URL)
-			log.Printf("URL user %+v", r.URL.User)
-			log.Printf("URL RequestURI() %+v", r.URL.RequestURI())
-			log.Printf("URL Query() %+v", r.URL.Query())
-			log.Printf("URL Query()username %+v", r.URL.Query().Get("username"))
-			log.Printf("URL Query()first_name %+v", r.URL.Query().Get("first_name"))
-			log.Printf("URL Query()last_name %+v", r.URL.Query().Get("last_name"))
-			log.Printf("URL Query() auth_date %+v", r.URL.Query().Get("auth_date"))
-			log.Printf("URL Query()allows_write_to_pm %+v", r.URL.Query().Get("allows_write_to_pm"))
-			log.Printf("URL Query()id %+v", r.URL.Query().Get("id"))
-			log.Printf("URL Query()user %+v", r.URL.Query().Get("user"))
-			log.Printf("URL Query()id %+v", r.URL.Query().Get("id"))
-			log.Printf("URL Query()hash %+v", r.URL.Query().Get("hash"))
-			log.Printf("URL String() %+v", r.URL.String())
-			log.Printf("URL Fragment %+v", r.URL.Fragment)
-			log.Printf("Form %+v", r.Form)
-			log.Printf("RequestURI %+v", r.RequestURI)
-			html := `
-<!DOCTYPE html>
-	<html>
-		<head>
-			<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
-			<title>Bio</title>
-		    <script src="https://unpkg.com/htmx.org@1.6.1"></script>
-    		<style>
-    		    body { 
-    		        font-family: Arial, sans-serif; 
-    		        background-color: #000000;
-    		        color: #ffffff;
-    		        margin: 0;
-    		        height: 100vh;
-    		        display: flex;
-    		        justify-content: flex-start;
-    		        align-items: center;
-    		        flex-direction: column;
-    		        padding-left: 20px;
-    		    }
-    		    .content-container {
-    		        text-align: left;
-    		        display: flex;
-    		        flex-direction: column;
-    		        align-items: flex-start;
-    		    }
-    		    .info-block {
-    		        transition: all 0.3s ease;
-    		    }
-    		    .info-block:hover {
-    		        transform: scale(1.05);
-    		    }
-    		    .highlight {
-    		        background-color: #ffffff;
-    		        color: #000000;
-    		        padding: 5px;
-    		        margin: 10px 0;
-    		        transition: all 0.3s ease;
-    		    }
-    		    .highlight:hover {
-    		        background-color: #000000;
-    		        color: #ffffff;
-    		    }
-				.addTextButton {
-				    padding: 10px 20px; /* size */
-				    background-color: #008CBA; /* color */
-				    border: none; /* remove default border */
-				    color: black; /* text color */
-				    text-align: center; /* align text */
-				    text-decoration: none; /* remove underline */
-				    display: inline-block;
-				    font-size: 16px; /* text size */
-				    margin: 4px 2px;
-				    transition-duration: 0.4s; /* transition effect */
-				    cursor: pointer; /* change cursor style on hover */
-				    border-radius: 4px; /* rounded corners */
-				}
-    		</style>
-		</head>
-		<body>
-			<div id="bio" hx-get="/getBio" hx-trigger="load">
-			        Loading...
-			</div>
-			<button id="addTextButton" class="addTextButton">...?</button>
-    		<div id="extraText"><h1></h1></div>
-    		<script>
-    		    document.getElementById("addTextButton").addEventListener("click", function() {
-    		        var newText = document.createElement("p");
-    		        newText.textContent = "...is to stay kind, humble and keep learning.";
-    		        document.getElementById("extraText").appendChild(newText);
-    		        this.style.display = "none"; // hides the button
-    		    });
-    		</script>
-
-		</body>
-	</html>
-`
-			_, err = w.Write([]byte(html))
-			if err != nil {
-				log.Printf("error 2 %s", err.Error())
-			}
-			//sshand.GetNikitaReq(w, r)
-			//log.Println("bot-login, redirecting to https://www.google.com/ or http://localhost:8181 + :", r.RequestURI)
-			//link := "http://localhost:8181" + strings.TrimPrefix(r.RequestURI, "/bot")
-			//http.Redirect(w, r, "https://www.google.com/", http.StatusMovedPermanently)
-		})
 	r.HandleFunc("/get_test_time", sshand.GetTestTime).Methods("GET") //routing post
 	r.HandleFunc("/getBio", sshand.GetBio).Methods("GET")             //routing post
 	r.HandleFunc("/", sshand.Bio).Methods("GET")                      //routing post
