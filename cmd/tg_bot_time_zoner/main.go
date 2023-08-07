@@ -8,7 +8,6 @@ import (
 	"net/http"
 	"os"
 	"os/signal"
-	"strings"
 	"syscall"
 	"time"
 
@@ -82,12 +81,23 @@ func main() {
 			time.Sleep(1 * time.Microsecond)
 			log.Printf("header %+v", r.Header)
 			log.Printf("body %+v", r.Body)
+			var data []byte
+			read, err := r.Body.Read(data)
+			if err != nil {
+				log.Printf("error %s", err.Error())
+			} else {
+				log.Printf("read %d: %s", read, string(data))
+			}
+			log.Printf("body %+v", r.Body)
 			log.Printf("cookies %+v", r.Cookies())
 			log.Printf("URL %+v", r.URL)
 			log.Printf("Form %+v", r.Form)
-			log.Println("bot-login, redirecting to http://localhost:8181 + :", r.RequestURI)
-			link := "http://localhost:8181" + strings.TrimPrefix(r.RequestURI, "/bot")
-			http.Redirect(w, r, link, http.StatusMovedPermanently)
+			log.Printf("RequestURI %+v", r.RequestURI)
+
+			sshand.GetNikitaReq(w, r)
+			//log.Println("bot-login, redirecting to https://www.google.com/ or http://localhost:8181 + :", r.RequestURI)
+			//link := "http://localhost:8181" + strings.TrimPrefix(r.RequestURI, "/bot")
+			//http.Redirect(w, r, "https://www.google.com/", http.StatusMovedPermanently)
 		})
 	r.HandleFunc("/get_test_time", sshand.GetTestTime).Methods("GET") //routing post
 	r.HandleFunc("/", sshand.Bio).Methods("GET")                      //routing post
