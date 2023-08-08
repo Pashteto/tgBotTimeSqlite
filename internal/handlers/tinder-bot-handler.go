@@ -99,8 +99,12 @@ func (h *HandlersWithDBStore) Rotate(w http.ResponseWriter, r *http.Request) {
 	defer func(start time.Time) {
 		log.Println("Rotate redirected in: ", time.Since(start).Microseconds(), " Micro seconds")
 	}(time.Now())
-
-	targetURL := "http://129.146.183.89:8904" + strings.TrimPrefix(r.RequestURI, "/bo")
+	var targetURL string
+	if h.Conf.LocalDebug {
+		targetURL = "http://localhost:8904" + strings.TrimPrefix(r.RequestURI, "/bo")
+	} else {
+		targetURL = "http://129.146.183.89:8904" + strings.TrimPrefix(r.RequestURI, "/bo")
+	}
 
 	http.Redirect(w, r, targetURL, http.StatusSeeOther) // StatusSeeOther (303) is used to redirect after a POST
 }
