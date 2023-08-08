@@ -5,108 +5,18 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"strings"
 	"sync"
+	"time"
 )
 
 // BotEntryHandler logs you in.
 func (h *HandlersWithDBStore) BotEntryHandler(w http.ResponseWriter, r *http.Request) {
-	html := `
-<!DOCTYPE html>
-<html>
-<head>
-    <title>User Form</title>
-</head>
-<body>
-
-<div id="userFormDiv" style="display: none;">
-    <form id="userForm" action="/submit" method="post">
-        <label for="firstName">First Name:</label><br>
-        <input type="text" id="firstName" name="firstName" readonly><br>
-        <label for="lastName">Last Name:</label><br>
-        <input type="text" id="lastName" name="lastName" readonly><br>
-        <label for="username">Username:</label><br>
-        <input type="text" id="username" name="username" readonly><br>
-        <label for="description">Description:</label><br>
-        <textarea id="description" name="description" readonly></textarea><br>
-        <label for="keywords">Keywords:</label><br>
-        <input type="text" id="keywords" name="keywords" readonly><br>
-    </form>
-</div>
-
-<div id="loginDiv">
-    <!-- Login form or message goes here -->
-    <p>Please login to see your profile.</p>
-</div>
-
-<script>
-    // Function to parse URL data
-    function parseUrlData() {
-        const fragment = window.location.hash.substring(1);
-        const params = new URLSearchParams(fragment);
-        const userParam = params.get('tgWebAppData');
-        const decodedUserParam = decodeURIComponent(userParam);
-        const userJson = decodedUserParam.substring(decodedUserParam.indexOf('{'), decodedUserParam.lastIndexOf('}') + 1);
-        const user = JSON.parse(decodeURIComponent(userJson));
-        return user;
-    }
-
-// Function to load the profile page
-function loadProfilePage(username) {
-    fetch('/api/profile?username=${encodeURIComponent(username)}')
-    .then(response => response.json())
-    .then(data => {
-        // Display the user's profile data
-        document.getElementById('firstName').value = data.first_name;
-        document.getElementById('lastName').value = data.last_name;
-        document.getElementById('username').value = data.username;
-        document.getElementById('description').value = data.description;
-        document.getElementById('keywords').value = data.keywords;
-    })
-    .catch(error => {
-        console.error('There has been a problem with your fetch operation:', error);
-    });
-}
-    // Function to show the login page
-    function showLoginPage() {
-        document.getElementById('userFormDiv').style.display = 'none';
-        document.getElementById('loginDiv').style.display = 'block';
-    }
-
-    // Function to login the user
-    function loginUser(user) {
-    	    fetch('/api/login', {
-    	method: 'POST',
-    	headers: {
-    	    'Content-Type': 'application/json'
-    	},
-    	body: JSON.stringify({
-    	    username: user.username
-    	})}).then(response => response.json()).then(data => {
-	    if (data.success) {
-	        // User is authenticated, load the profile page
-	        loadProfilePage(user.username);
-	    } else {
-	        // User is not authenticated, show the login page
-	        showLoginPage();
-	    }
-	});
-    }
-
-    // Login the user on page load
-    window.onload = function() {
-        const user = parseUrlData();
-        loginUser(user);
-    };
-</script>
-
-</body>
-</html>
-`
-	_, err := w.Write([]byte(html))
-	if err != nil {
-		log.Printf("error 2 %s", err.Error())
-	}
-
+	http.ServeFile(w, r, "./static/html/index.html")
+	//_, err := w.Write([]byte(html))
+	//if err != nil {
+	//	log.Printf("error 2 %s", err.Error())
+	//}
 }
 
 // BotLogin BotLogin.
@@ -124,6 +34,7 @@ func (h *HandlersWithDBStore) BotLogin(w http.ResponseWriter, r *http.Request) {
 	dbMu.RLock()
 	_, ok := db[req.Username]
 	dbMu.RUnlock()
+	log.Println("BotLogin _, ok := db[req.Username]: ", ok)
 
 	// Respond with the result
 	json.NewEncoder(w).Encode(map[string]bool{"success": ok})
@@ -151,6 +62,7 @@ func (h *HandlersWithDBStore) BotProfile(w http.ResponseWriter, r *http.Request)
 
 // BotSubmitHandler fetches your fragments.
 func (h *HandlersWithDBStore) BotSubmitHandler(w http.ResponseWriter, r *http.Request) {
+	// 1. Parse and validate the data
 	err := r.ParseForm()
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
@@ -160,8 +72,37 @@ func (h *HandlersWithDBStore) BotSubmitHandler(w http.ResponseWriter, r *http.Re
 	firstName := r.FormValue("firstName")
 	lastName := r.FormValue("lastName")
 	username := r.FormValue("username")
+	description := r.FormValue("description")
+	keywords := r.FormValue("keywords")
 
 	fmt.Printf("Received data: firstName = %s, lastName = %s, username = %s\n", firstName, lastName, username)
+
+	// 2. Save the data to the database map
+	newUser := User{
+		FirstName:   firstName,
+		LastName:    lastName,
+		Username:    username,
+		Description: description,
+		Keywords:    keywords,
+	}
+
+	dbMu.Lock() // Lock the mutex for writing
+	db[username] = newUser
+	dbMu.Unlock() // Unlock the mutex after writing
+
+	// 3. Redirect to the base page
+	http.Redirect(w, r, "/bo", http.StatusSeeOther) // StatusSeeOther (303) is used to redirect after a POST
+}
+
+// Rotate Rotate.
+func (h *HandlersWithDBStore) Rotate(w http.ResponseWriter, r *http.Request) {
+	defer func(start time.Time) {
+		log.Println("Rotate redirected in: ", time.Since(start).Microseconds(), " Micro seconds")
+	}(time.Now())
+
+	targetURL := "http://129.146.183.89:8904" + strings.TrimPrefix(r.RequestURI, "/bo")
+
+	http.Redirect(w, r, targetURL, http.StatusSeeOther) // StatusSeeOther (303) is used to redirect after a POST
 }
 
 /*

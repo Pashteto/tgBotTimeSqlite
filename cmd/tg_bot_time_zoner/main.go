@@ -69,13 +69,15 @@ func main() {
 	sshand := handlers.NewHandlersWithDBStore(&conf, sqliteRepo, &fileServ)
 
 	r := mux.NewRouter()
+	r.PathPrefix("/static/").Handler(http.StripPrefix("/static/", http.FileServer(http.Dir("./static/"))))
 
 	r.HandleFunc("/stop_listen", sshand.StopListenBot).Methods("POST")
 	r.HandleFunc("/listen", sshand.ListenBot).Methods("POST")
 	r.HandleFunc("/helping-nikita", sshand.GetNikitaReq).Methods("GET")
 	r.HandleFunc("/helping-elena", sshand.GetElenaReq).Methods("GET")
 	r.HandleFunc("/echo", sshand.EchoWS).Methods("GET")
-	r.HandleFunc("/bo", sshand.BotEntryHandler).Methods("GET")
+	r.HandleFunc("/bolocal", sshand.BotEntryHandler).Methods("GET")
+	r.HandleFunc("/bo", sshand.Rotate)
 	r.HandleFunc("/api/login", sshand.BotLogin).Methods("POST")
 	r.HandleFunc("/api/profile", sshand.BotProfile).Methods("GET")
 

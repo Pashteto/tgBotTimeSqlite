@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>User Form</title>
+</head>
+<body>
+
+<div id="userFormDiv" style="display: none;">
+    <form id="userForm1" action="/submit" method="post">
+        <label for="firstName1">First Name:</label><br>
+        <input type="text" id="firstName1" name="firstName1" readonly><br>
+        <label for="lastName1">Last Name:</label><br>
+        <input type="text" id="lastName1" name="lastName1" readonly><br>
+        <label for="username1">Username:</label><br>
+        <input type="text" id="username1" name="username1" readonly><br>
+        <label for="description">Description:</label><br>
+        <textarea id="description" name="description" readonly></textarea><br>
+        <label for="keywords">Keywords:</label><br>
+        <input type="text" id="keywords" name="keywords" readonly><br>
+    </form>
+</div>
+
+<div id="userRegisterDiv" style="display: none;">
+    <form id="userForm" action="/submit" method="post">
+        <label for="firstName">First Name:</label><br>
+        <input type="text" id="firstName" name="firstName"><br>
+        <label for="lastName">Last Name:</label><br>
+        <input type="text" id="lastName" name="lastName"><br>
+        <label for="username">Username:</label><br>
+        <input type="text" id="username" name="username"><br>
+        <input type="submit" value="Send Data">
+    </form>
+</div>
+
+<div id="loginDiv" style="display: block;">
+    <!-- Login form or message goes here -->
+    <p>Please login to see your profile.</p>
+</div>
+
+<script src="/static/html/app.js"></script>
+<script defer>
+    showLoginPage();
+    // Login the user on page load
+    window.onload = function() {
+        const user = parseUrlData();
+        document.getElementById('firstName').value = user.first_name;
+        document.getElementById('lastName').value = user.last_name;
+        document.getElementById('username').value = user.username;
+        loginUser(user);
+    };
+</script>
+
+</body>
+</html>
