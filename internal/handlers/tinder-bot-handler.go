@@ -97,7 +97,7 @@ func (h *HandlersWithDBStore) BotSubmitHandler(w http.ResponseWriter, r *http.Re
 // Rotate Rotate.
 func (h *HandlersWithDBStore) Rotate(w http.ResponseWriter, r *http.Request) {
 	defer func(start time.Time) {
-		log.Println("Rotate redirected in: ", time.Since(start).Microseconds(), " Micro seconds")
+		log.Println("Rotate redirected in: ", time.Since(start).Microseconds(), " µs")
 	}(time.Now())
 	var targetURL string
 	if h.Conf.LocalDebug {
